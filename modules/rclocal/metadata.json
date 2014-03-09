@@ -1,0 +1,29 @@
+{
+  "name": "example42-rclocal",
+  "version": "2.0.5",
+  "summary": "Puppet module ro manage rc.local",
+  "author": "Alessandro Franceschi",
+  "description": "This module manages rc.local",
+  "dependencies": [
+    {
+      "name": "example42/puppi",
+      "version_requirement": ">=2.0.0"
+    }
+  ],
+  "types": [
+
+  ],
+  "checksums": {
+    "LICENSE": "a300b604c66de62cf6e923cca89c9d83",
+    "Modulefile": "eee591fad126269adf1d6d6856199b8a",
+    "README.md": "114b8526e447fa4ad25f227cfc59d85d",
+    "Rakefile": "e90d68823ff237c89224eb139f8926ad",
+    "manifests/init.pp": "720a403217a528ed65c83b9e654d59fc",
+    "manifests/params.pp": "117ae74039d2ede79511b1a48ca6d269",
+    "manifests/script.pp": "ac11d10ec133ba3e0e0c46de0ada833b",
+    "templates/rc.local.erb": "be2e23b1c125dec87f984a24aba32a62"
+  },
+  "source": "https://github.com/example42/puppet-rclocal",
+  "project_page": "http://www.example42.com",
+  "license": "Apache2"
+}
