@@ -1,6 +1,6 @@
 
 #
-# Before running this Puppet manifest install the follwing Puppet modules:
+# This Puppet manifest uses these Puppet modules:
 #   puppet module install bashtoni/timezone
 #   puppet module install example42/php
 #   puppet module install example42/rclocal
@@ -23,7 +23,15 @@ $group    = $username
 $mysqlUserUsername = $username
 $mysqlRootPassword = "mysqlRootPassword_CHANGE_THIS"
 $mysqlUserPassword = "mysqlUserPassword_CHANGE_THIS"
-$temperatureControllerCodeCloneUrl = "https://github.com/CHANGE_THIS/CHANGE_THIS.git",
+
+$regulatorWebsiteUsername = $username
+$regulatorWebsitePassword = "regulatorWebsitePassword_CHANGE_THIS"
+
+$externalControllerWebsiteUrl      = "http://externalControllerWebsite_CHANGE_THIS"                                                     
+$externalControllerWebsiteUsername = "temperature_controller"     
+$externalControllerWebsitePassword = "externalControllerWebsitePassword_CHANGE_THIS"
+
+$temperatureControllerCodeCloneUrl = "https://github.com/ulrikhindoe/temperature_controller_code.git"
 
 $databaseName = "temperature_controller"
 $timezoneRegion = 'Europe'
@@ -31,19 +39,17 @@ $timezoneLocality = 'Copenhagen'
 $webSiteFolderName = 'temperature_controller'
 $projectFolderName = 'temperature_controller'
 
+
 #####################################################################
-# packages
+# nice to haves
 #####################################################################
 
 
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
-
 package { "vim":
   ensure => installed,
 }
-
-
 
 #####################################################################
 # user
@@ -80,8 +86,7 @@ class { 'timezone':
 class { 'php': }
 
 php::module { "curl": }
-
-
+php::module { "mysqlnd": }
 
 
 ######################################################################
@@ -92,7 +97,7 @@ cron { temperature_controller_cronjob:
   command => "/usr/bin/php /home/${username}/${projectFolderName}/cronjob/measure_and_regulate.php",
   user    => root,
   minute  => '*/1',
-  require => Class['php'],
+  require => [Class['php'], File["/home/${username}/${projectFolderName}/www/config.php"]]
 }
 
 
@@ -209,29 +214,13 @@ exec { 'userdir':
 # website
 ######################################################################
 
-file { "/home/${username}/${projectFolderName}":
-  ensure  => directory,
-  group   => $group,
-  owner   => $username,
-  mode    => 0755,
-  require  => [ User["${username}"] ],
-}
-
-file { "/home/${username}/${projectFolderName}/www":
-  ensure  => directory,
-  group   => $group,
-  owner   => $username,
-  mode    => 0755,
-  require => [ File["/home/${username}/${projectFolderName}"] ],
-}
-
 file { "/etc/apache2/sites-available/${webSiteFolderName}":
   ensure  => file,
   group   => "root",
   owner   => "root",
   mode    => 0644,
   content  => template("/etc/puppet/manifests/files/temperature_controller_apache_conf.erb"),
-  require => [ File["/home/${username}/${projectFolderName}/www"] ],
+  require => Vcsrepo["/home/${username}/${projectFolderName}"],
 }
 
 package { 'git':
@@ -239,12 +228,20 @@ package { 'git':
 }
 
 vcsrepo { "/home/${username}/${projectFolderName}":
-  ensure => latest,
+  ensure => present,
   provider => git,
   owner    => $username,
   group    => $group,
   source => $temperatureControllerCodeCloneUrl,
-  require  => [ File["/home/${username}/www"], Package["git"] ],
+  require  => [ User[$username], Package["git"] ],
+}
+
+file { "/home/${username}/${projectFolderName}/www/config.php":
+  ensure => file,
+  owner  => $username,
+  group  => $group,
+  content  => template("/etc/puppet/manifests/files/temperature_controller_config_php.erb"),	
+  require => Vcsrepo["/home/${username}/${projectFolderName}"],
 }
 
 file { '/etc/apache2/sites-enabled/000-default':
@@ -340,5 +337,4 @@ class { 'samba::server':
   },
   require => User["${username}"],
 }
-
 
