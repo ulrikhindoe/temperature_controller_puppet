@@ -1,0 +1,31 @@
+<?php
+/*
+ * Common configuration for the cronjob and www
+ */
+
+$config = [
+	'serverType' => 'regulatorLocallyControlled', // one of 'regulatorLocallyControlled' | 'regulatorRemotelyControlled' | 'externalController'
+
+	'database' => [
+		'host'         => 'localhost',
+		'username'     => '<%= @mysqlUserUsername%>',
+		'password'     => '<%= @mysqlUserPassword%>',
+		'databaseName' => 'temperature_controller',
+	],
+
+	// Is required if serverType is regulatorLocallyControlled or externalController
+	'web' => [
+		// Will not be used directly. Must be placed in .htpasswd. Password must be hashed
+		'username'     => '<%= @regulatorWebsiteUsername%>',
+		'password'     => '<%= @regulatorWebsitePassword%>',
+	],
+
+	// Only relevant if serverType is regulatorLocallyControlled || regulatorRemotelyControlled
+	'cronjob' => [
+		'remoteController' => [
+			'root'     => '<%= @externalControllerWebsiteUrl%>',
+			'username' => '<%= @externalControllerWebsiteUsername%>',
+			'password' => '<%= @externalControllerWebsitePassword%>',
+		],
+	]
+];
