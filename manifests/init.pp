@@ -70,7 +70,7 @@ user { $username:
 
 file_line { 'sudoer':
   ensure => present,
-  line => 'ulrik ALL=(ALL) NOPASSWD: ALL',
+  line => "${username} ALL=(ALL) NOPASSWD: ALL",
   path => '/etc/sudoers',
 }
 
