@@ -21,15 +21,15 @@
 $username = "ulrik"
 $group    = $username
 $mysqlUserUsername = $username
-$mysqlRootPassword = "mysqlRootPassword_CHANGE_THIS"
-$mysqlUserPassword = "mysqlUserPassword_CHANGE_THIS"
+$mysqlRootPassword = "foo"
+$mysqlUserPassword = "fuu"
 
 $regulatorWebsiteUsername = $username
-$regulatorWebsitePassword = "regulatorWebsitePassword_CHANGE_THIS"
+$regulatorWebsitePassword = "mangarosa"
 
-$externalControllerWebsiteUrl      = "http://externalControllerWebsite_CHANGE_THIS"                                                     
+$externalControllerWebsiteUrl      = "http://tc.hindoe.dk"                                                     
 $externalControllerWebsiteUsername = "temperature_controller"     
-$externalControllerWebsitePassword = "externalControllerWebsitePassword_CHANGE_THIS"
+$externalControllerWebsitePassword = "jdfHJKUFgwu"
 
 $temperatureControllerCodeCloneUrl = "https://github.com/ulrikhindoe/temperature_controller_code.git"
 
@@ -68,6 +68,11 @@ user { $username:
   managehome  => true,
 }
 
+file_line { 'sudoer':
+  ensure => present,
+  line => 'ulrik ALL=(ALL) NOPASSWD: ALL',
+  path => '/etc/sudoers',
+}
 
 #####################################################################
 # timezone
