@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `temperature_controller`.`parameters` (
 CREATE TABLE IF NOT EXISTS `temperature_controller`.`time_series` (      
     `measured_at` DATETIME NOT NULL ,
     `temperature` DECIMAL(6,3) NOT NULL ,
-    `outside_temperature` decimal(6,3) NOT NULL,
+    `outside_temperature` decimal(6,3),
     `minimum_temperature` decimal(6,3) NOT NULL,
     `heat_on`     INT NOT NULL,
     PRIMARY KEY (`measured_at`) );
